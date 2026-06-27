@@ -254,6 +254,7 @@ public partial class Main
         ProcessHoveredItem();
         VisibleInventoryValue();
         ProcessExchangeCurrencyPicker();
+        ProcessAncestorFightRewards();
 
         if (StashPanel.IsVisible)
         {
@@ -1061,6 +1062,28 @@ public partial class Main
             };
             GetValue(data);
             PriceBoxOverItem(data, null);
+        }
+    }
+
+    private void ProcessAncestorFightRewards()
+    {
+        if ((!Settings.PriceOverlaySettings.DoNotDrawWhileAnItemIsHovered || HoveredItem == null) &&
+            GameController.IngameState.IngameUi.AncestorFightSelectionWindow is { IsVisible: true, Options: { Count: > 0 } options } window)
+        {
+            var containerBounds = window.TableContainer.GetClientRectCache;
+            foreach (var x in options)
+            {
+                try
+                {
+                    var customItem = new CustomItem(x.Reward, x.RewardElement);
+                    GetValue(customItem);
+                    PriceBoxOverItem(customItem, containerBounds);
+                }
+                catch (Exception ex)
+                {
+                    LogError(ex.ToString());
+                }
+            }
         }
     }
 
