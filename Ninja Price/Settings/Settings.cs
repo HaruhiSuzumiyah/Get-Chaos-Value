@@ -106,6 +106,8 @@ public class TradeWindowSettings
 public class HoveredItemSettings
 {
     public ToggleNode Show { get; set; } = new(true);
+    public RangeNode<int> OffsetX { get; set; } = new(0, 0, 256);
+    public RangeNode<int> OffsetY { get; set; } = new(0, 0, 256);
     public HoveredItemSparklineSettings Sparkline { get; set; } = new();
 }
 
