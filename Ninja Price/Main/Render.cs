@@ -492,10 +492,14 @@ public partial class Main
         var nonEmptySections = textSections.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).ToList();
         if (nonEmptySections.Count > 0 || showChangeLine)
         {
-            var mousePos = ImGui.GetMousePos();
-            mousePos.X += Settings.HoveredItemSettings.OffsetX;
-            mousePos.Y += Settings.HoveredItemSettings.OffsetY;
-            ImGui.SetNextWindowPos(mousePos);
+            if (Settings.HoveredItemSettings.OffsetX.Value != 0 || Settings.HoveredItemSettings.OffsetX.Value != 0)
+            {
+                var mousePos = ImGui.GetMousePos();
+                mousePos.X += Settings.HoveredItemSettings.OffsetX;
+                mousePos.Y += Settings.HoveredItemSettings.OffsetY;
+                ImGui.SetNextWindowPos(mousePos);
+            }
+            
             ImGui.BeginTooltip();
             var hoverTextColor = priceInChaos >= Settings.VisualPriceSettings.ExtraValuableColorThreshold.Value 
                 ? Settings.VisualPriceSettings.ExtraValuableColor 
