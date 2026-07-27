@@ -127,11 +127,11 @@ public partial class Main
 
     private void RemoveUnlikelyItems(CollectiveApiData data)
     {
-        data.UniqueAccessories.Lines.RemoveAll(x => x.DetailsId.Contains("-relic"));
-        data.UniqueArmours.Lines.RemoveAll(x => x.DetailsId.Contains("-relic"));
-        data.UniqueFlasks.Lines.RemoveAll(x => x.DetailsId.Contains("-relic"));
-        data.UniqueJewels.Lines.RemoveAll(x => x.DetailsId.Contains("-relic"));
-        data.UniqueWeapons.Lines.RemoveAll(x => x.DetailsId.Contains("-relic"));
+        data.UniqueAccessories.Lines?.RemoveAll(x => x.DetailsId?.Contains("-relic") == true);
+        data.UniqueArmours.Lines?.RemoveAll(x => x.DetailsId?.Contains("-relic") == true);
+        data.UniqueFlasks.Lines?.RemoveAll(x => x.DetailsId?.Contains("-relic") == true);
+        data.UniqueJewels.Lines?.RemoveAll(x => x.DetailsId?.Contains("-relic") == true);
+        data.UniqueWeapons.Lines?.RemoveAll(x => x.DetailsId?.Contains("-relic") == true);
     }
 
     private async Task<bool> IsLocalCacheStale(string metadataPath)

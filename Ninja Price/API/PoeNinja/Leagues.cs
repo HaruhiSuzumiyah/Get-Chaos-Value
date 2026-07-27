@@ -1,4 +1,4 @@
-﻿namespace Ninja_Price.API.PoeNinja;
+namespace Ninja_Price.API.PoeNinja;
 
 public class NinjaLeagueListRootObject
 {
