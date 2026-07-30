@@ -35,5 +35,6 @@ public enum ItemTypes
     DjinnCoin,
     Wombgift,
     Astrolabe,
-    BaseType
+    BaseType,
+    Ducat,
 }

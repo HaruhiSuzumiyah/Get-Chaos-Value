@@ -407,6 +407,7 @@ public partial class Main
             case ItemTypes.AllflameEmber:
             case ItemTypes.DjinnCoin:
             case ItemTypes.Astrolabe:
+            case ItemTypes.Ducat:
                 if (priceInDivines >= 0.1)
                 {
                     var priceInDivinessPerOne = priceInDivines / HoveredItem.CurrencyInfo.StackSize;

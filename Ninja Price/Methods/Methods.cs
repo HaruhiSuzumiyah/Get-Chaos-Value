@@ -221,6 +221,17 @@ public partial class Main
                         }
 
                         break;
+
+                    case ItemTypes.Ducat:
+                        var ducatSearch = CollectedData.Ducats.LinesByName.GetValueOrDefault(item.BaseName);
+                        if (ducatSearch != default)
+                        {
+                            item.PriceData.MinChaosValue = item.CurrencyInfo.StackSize * ducatSearch.ChaosEquivalent;
+                            SetPriceChangeData(item.PriceData, ducatSearch.Line.sparkline.totalChange, ducatSearch.Line.sparkline.data);
+                            item.PriceData.DetailsId = ducatSearch.Item.detailsId;
+                        }
+
+                        break;
                     case ItemTypes.Catalyst:
                         var catalystSearch = CollectedData.Currency.LinesByName.GetValueOrDefault(item.BaseName);
                         if (catalystSearch != default)

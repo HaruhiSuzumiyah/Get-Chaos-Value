@@ -20,6 +20,7 @@ public class CollectiveApiData
     public CurrencyOverviewData.RootObject AllflameEmbers { get; set; } = new();
     public CurrencyOverviewData.RootObject DjinnCoins { get; set; } = new();
     public CurrencyOverviewData.RootObject Astrolabe { get; set; } = new();
+    public CurrencyOverviewData.RootObject Ducats { get; set; } = new();
 
     public Invitations.RootObject Invitations { get; set; } = new();
     public Vials.RootObject Vials { get; set; } = new();

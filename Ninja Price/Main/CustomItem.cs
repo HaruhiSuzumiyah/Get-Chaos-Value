@@ -330,6 +330,10 @@ public class CustomItem
         {
             ItemType = ItemTypes.Scarab;
         }
+        else if (BaseName.EndsWith(" Ducat"))
+        {
+            ItemType = ItemTypes.Ducat;
+        }
         else if (ClassName == "StackableCurrency" &&
                  !BaseName.StartsWith("Crescent Splinter") &&
                  !BaseName.StartsWith("Simulacrum") &&
