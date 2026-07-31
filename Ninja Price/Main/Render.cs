@@ -493,7 +493,7 @@ public partial class Main
         var nonEmptySections = textSections.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).ToList();
         if (nonEmptySections.Count > 0 || showChangeLine)
         {
-            if (Settings.HoveredItemSettings.OffsetX.Value != 0 || Settings.HoveredItemSettings.OffsetX.Value != 0)
+            if (Settings.HoveredItemSettings.OffsetX.Value != 0 || Settings.HoveredItemSettings.OffsetY.Value != 0)
             {
                 var mousePos = ImGui.GetMousePos();
                 mousePos.X += Settings.HoveredItemSettings.OffsetX;
