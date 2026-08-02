@@ -18,8 +18,6 @@ public class CustomItem
 {
     //because inlining is weird
     private static readonly GameStat ClusterJewelPassiveCountStat = Enum.Parse<GameStat>(nameof(GameStat.LocalJewelExpansionPassiveNodeCount));
-    // Part1/Part2 are the two halves of the Forbidden pair - Flame carries Part1 and Flesh Part2 -
-    // not two halves of one number.
     private static readonly GameStat ForbiddenFlameNotableStat = Enum.Parse<GameStat>(nameof(GameStat.UniqueJewelGrantsNotableHashPart1));
     private static readonly GameStat ForbiddenFleshNotableStat = Enum.Parse<GameStat>(nameof(GameStat.UniqueJewelGrantsNotableHashPart2));
 
@@ -198,7 +196,11 @@ public class CustomItem
 
                 FoulbornMods = mods.ExplicitMods.Where(x => x.RawName.StartsWith("MutatedUnique", StringComparison.Ordinal)).Select(x => x.Translation).ToHashSet();
 
-                GrantedPassiveName = GetGrantedPassiveName(mods.ExplicitMods);
+                if (UniqueName == "Forbidden Flesh" ||
+                    UniqueName == "Forbidden Flame")
+                {
+                    GrantedPassiveName = GetForbiddenJewelGrantedPassiveName(mods.ExplicitMods);
+                }
 
                 var itemStats = GetGameStats(mods.ImplicitMods);
 
@@ -488,11 +490,8 @@ public class CustomItem
         }
     }
 
-    // Forbidden Flame/Flesh name the ascendancy passive they allocate as a passive node hash on their
-    // single mod. Reading the hash is both exact and language independent, and it is the only option
-    // here regardless: ExileCore cannot translate this mod, rendering it literally as
-    // "Allocates -4181 if you have the matching modifier on Forbidden Flesh".
-    private static string GetGrantedPassiveName(IEnumerable<ItemMod> mods)
+    // Forbidden Flame/Flesh's mod stat value is the passive id that it grants
+    private static string GetForbiddenJewelGrantedPassiveName(IEnumerable<ItemMod> mods)
     {
         foreach (var mod in mods)
         {

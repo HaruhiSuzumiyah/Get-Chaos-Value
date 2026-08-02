@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using ExileCore.PoEMemory.Models;
 
 namespace Ninja_Price.Main;
@@ -23,9 +22,6 @@ public partial class Main : BaseSettingsPlugin<Settings.Settings>
     private int _updating;
     public Dictionary<string, List<string>> UniqueArtMapping = new Dictionary<string, List<string>>();
     private Dictionary<string, string> _soundFiles = [];
-
-    [GeneratedRegex("<[^>]*>{{(?<data>[^}]*)}}")]
-    private static partial Regex StripTagsRegex();
 
     public override bool Initialise()
     {
