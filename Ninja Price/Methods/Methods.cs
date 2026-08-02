@@ -90,6 +90,33 @@ public partial class Main
 
     private static float? ConvertSparklinePoint(object value) => value == null ? null : Convert.ToSingle(value);
 
+    private static bool NinjaNameEquals(string ninjaName, string gameName) =>
+        ninjaName != null && gameName != null &&
+        string.Equals(ninjaName.Replace('\x2019', '\x27'), gameName.Replace('\x2019', '\x27'), StringComparison.Ordinal);
+
+    // poe.ninja prices Forbidden Flame/Flesh per allocated ascendancy passive. The plain UniqueJewel
+    // line is an average over every passive, so it is badly wrong in both directions for any specific
+    // jewel. Fall through to that average only when the exact passive cannot be matched.
+    private bool TryGetForbiddenJewelPrice(CustomItem item)
+    {
+        if (string.IsNullOrEmpty(item.GrantedPassiveName) || string.IsNullOrEmpty(item.UniqueName))
+        {
+            return false;
+        }
+
+        var line = CollectedData.ForbiddenJewels.Lines?.Find(x =>
+            NinjaNameEquals(x.Variant, item.UniqueName) && NinjaNameEquals(x.Name, item.GrantedPassiveName));
+        if (line == null)
+        {
+            return false;
+        }
+
+        item.PriceData.MinChaosValue = line.ChaosValue ?? 0;
+        SetPriceChangeData(item.PriceData, line.SparkLine?.TotalChange, line.SparkLine?.Data);
+        item.PriceData.DetailsId = line.DetailsId;
+        return true;
+    }
+
     private void GetHoveredItem()
     {
         try
@@ -572,12 +599,17 @@ public partial class Main
                     }
                     case ItemTypes.UniqueJewel:
                     {
+                        if (TryGetForbiddenJewelPrice(item))
+                        {
+                            break;
+                        }
+
                         var uniqueName = item.UniqueName;
                         if (item.FoulbornMods.Any() && !string.IsNullOrEmpty(uniqueName))
                         {
                             uniqueName = $"Foulborn {uniqueName}";
                         }
-                        
+
                         var uniqueJewelSearch = CollectedData.UniqueJewels.Lines.FindAll(x =>
                             x.Name == uniqueName || item.UniqueNameCandidates.Contains(x.Name));
                         if (uniqueJewelSearch.Where(x => MatchesMutatedModifiers(item.FoulbornMods, x.MutatedModifiers?.Select(m => m.Text))).ToList() is { Count: > 0 } refined)

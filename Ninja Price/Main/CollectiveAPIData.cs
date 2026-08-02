@@ -30,6 +30,7 @@ public class CollectiveApiData
     public UniqueArmours.RootObject UniqueArmours { get; set; } = new();
     public UniqueFlasks.RootObject UniqueFlasks { get; set; } = new();
     public UniqueJewels.RootObject UniqueJewels { get; set; } = new();
+    public ForbiddenJewels.RootObject ForbiddenJewels { get; set; } = new();
     public UniqueMaps.RootObject UniqueMaps { get; set; } = new();
     public UniqueWeapons.RootObject UniqueWeapons { get; set; } = new();
     public WhiteMaps.RootObject WhiteMaps { get; set; } = new();

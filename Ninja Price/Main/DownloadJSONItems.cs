@@ -32,6 +32,7 @@ public partial class Main
     private const string UniqueArmoursUrl = "https://poe.ninja/poe1/api/economy/stash/current/item/overview?league={0}&type=UniqueArmour";
     private const string UniqueFlasksUrl = "https://poe.ninja/poe1/api/economy/stash/current/item/overview?league={0}&type=UniqueFlask";
     private const string UniqueJewelsUrl = "https://poe.ninja/poe1/api/economy/stash/current/item/overview?league={0}&type=UniqueJewel";
+    private const string ForbiddenJewelsUrl = "https://poe.ninja/poe1/api/economy/stash/current/item/overview?league={0}&type=ForbiddenJewel";
     private const string UniqueMapsUrl = "https://poe.ninja/poe1/api/economy/stash/current/item/overview?league={0}&type=UniqueMap";
     private const string UniqueWeaponsUrl = "https://poe.ninja/poe1/api/economy/stash/current/item/overview?league={0}&type=UniqueWeapon";
     private const string WhiteMapsUrl = "https://poe.ninja/poe1/api/economy/stash/current/item/overview?league={0}&type=Map";
@@ -104,6 +105,7 @@ public partial class Main
                 await LoadData<UniqueArmours.RootObject>("UniqueArmours.json", UniqueArmoursUrl, league, tryWebFirst, t => newData.UniqueArmours = t);
                 await LoadData<UniqueFlasks.RootObject>("UniqueFlasks.json", UniqueFlasksUrl, league, tryWebFirst, t => newData.UniqueFlasks = t);
                 await LoadData<UniqueJewels.RootObject>("UniqueJewels.json", UniqueJewelsUrl, league, tryWebFirst, t => newData.UniqueJewels = t);
+                await LoadData<ForbiddenJewels.RootObject>("ForbiddenJewels.json", ForbiddenJewelsUrl, league, tryWebFirst, t => newData.ForbiddenJewels = t);
                 await LoadData<UniqueMaps.RootObject>("UniqueMaps.json", UniqueMapsUrl, league, tryWebFirst, t => newData.UniqueMaps = t);
                 await LoadData<UniqueWeapons.RootObject>("UniqueWeapons.json", UniqueWeaponsUrl, league, tryWebFirst, t => newData.UniqueWeapons = t);
                 await LoadData<WhiteMaps.RootObject>("WhiteMaps.json", WhiteMapsUrl, league, tryWebFirst, t => newData.WhiteMaps = t);

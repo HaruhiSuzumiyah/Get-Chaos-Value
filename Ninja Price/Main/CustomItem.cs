@@ -18,6 +18,10 @@ public class CustomItem
 {
     //because inlining is weird
     private static readonly GameStat ClusterJewelPassiveCountStat = Enum.Parse<GameStat>(nameof(GameStat.LocalJewelExpansionPassiveNodeCount));
+    // Part1/Part2 are the two halves of the Forbidden pair - Flame carries Part1 and Flesh Part2 -
+    // not two halves of one number.
+    private static readonly GameStat ForbiddenFlameNotableStat = Enum.Parse<GameStat>(nameof(GameStat.UniqueJewelGrantsNotableHashPart1));
+    private static readonly GameStat ForbiddenFleshNotableStat = Enum.Parse<GameStat>(nameof(GameStat.UniqueJewelGrantsNotableHashPart2));
 
     public static Main Core;
     public string BaseName;
@@ -54,6 +58,7 @@ public class CustomItem
     public readonly List<string> EnchantedStats;
     public readonly string CapturedMonsterName;
     public HashSet<string> FoulbornMods;
+    public readonly string GrantedPassiveName;
     public readonly int WombgiftLevel;
 
     public readonly uint EntityId;
@@ -192,6 +197,8 @@ public class CustomItem
                 }
 
                 FoulbornMods = mods.ExplicitMods.Where(x => x.RawName.StartsWith("MutatedUnique", StringComparison.Ordinal)).Select(x => x.Translation).ToHashSet();
+
+                GrantedPassiveName = GetGrantedPassiveName(mods.ExplicitMods);
 
                 var itemStats = GetGameStats(mods.ImplicitMods);
 
@@ -479,6 +486,33 @@ public class CustomItem
                     break;
             }
         }
+    }
+
+    // Forbidden Flame/Flesh name the ascendancy passive they allocate as a passive node hash on their
+    // single mod. Reading the hash is both exact and language independent, and it is the only option
+    // here regardless: ExileCore cannot translate this mod, rendering it literally as
+    // "Allocates -4181 if you have the matching modifier on Forbidden Flesh".
+    private static string GetGrantedPassiveName(IEnumerable<ItemMod> mods)
+    {
+        foreach (var mod in mods)
+        {
+            var statNames = mod.ModRecord?.StatNames;
+            if (statNames == null) continue;
+
+            for (var i = 0; i < statNames.Length && i < mod.Values.Count; i++)
+            {
+                var stat = statNames[i]?.MatchingStat;
+                if (stat != ForbiddenFlameNotableStat && stat != ForbiddenFleshNotableStat) continue;
+
+                // The hash is stored as a signed 16 bit value, so node ids above 32767 arrive negative
+                // (61355 reads as -4181). Mask it back into the unsigned id space before looking up.
+                var name = Core.GameController.Files.PassiveSkills
+                    .GetPassiveSkillByPassiveId(mod.Values[i] & 0xFFFF)?.Name;
+                if (!string.IsNullOrEmpty(name)) return name;
+            }
+        }
+
+        return null;
     }
 
     public static Dictionary<GameStat, int> GetGameStats(IEnumerable<ItemMod> mods)
