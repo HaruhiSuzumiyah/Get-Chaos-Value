@@ -29,6 +29,7 @@ public class CustomItem
     public bool IsIdentified;
     public Influence InfluenceFlags;
     public bool IsCorrupted;
+    public int CorruptionImplicitCount;
     public bool IsElder;
     public bool IsShaper;
     public bool IsCrusader;
@@ -183,6 +184,7 @@ public class CustomItem
                 EnchantedStats = mods.EnchantedStats;
                 UniqueName = mods.UniqueName?.Replace('\x2019', '\x27');
                 IsMirrored = mods.IsMirrored;
+                CorruptionImplicitCount = IsCorrupted ? mods.ImplicitMods.Count : 0;
                 if (!IsIdentified && Rarity == ItemRarity.Unique)
                 {
                     var artPath = itemEntity.GetComponent<RenderItem>()?.ResourcePath;

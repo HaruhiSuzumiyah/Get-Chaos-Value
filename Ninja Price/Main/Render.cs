@@ -56,6 +56,12 @@ public partial class Main
         _disenchantCache = new TimeCache<List<VillageUniqueDisenchantValue>>(() => GameController.Files.VillageUniqueDisenchantValues.EntriesList, 1000);
     }
 
+    private const float DustBaseMultiplier = 125f; // 100 (3.25 base) x 1.25 (3.26+ scalar)
+
+    private float? ComputeDust(float? baseValue) =>
+        baseValue * DustBaseMultiplier * (Math.Clamp(HoveredItem.ItemLevel, 65, 84) - 64) * (1 + HoveredItem.Quality / 50f)
+        * (1 + 0.5f * HoveredItem.CorruptionImplicitCount);
+
     private List<ItemOnGround> GetItemsOnGround(List<ItemOnGround> previousValue)
     {
         var prevDict = previousValue
@@ -426,8 +432,8 @@ public partial class Main
                 if (HoveredItem.UniqueNameCandidates.Any())
                 {
                     AddText(HoveredItem.UniqueNameCandidates.Count == 1
-                        ? $"\nIdentified as: {HoveredItem.UniqueNameCandidates.First()} (disenchants for {_disenchantCache.Value.FirstOrDefault(y => y.UniqueName?.Text == HoveredItem.UniqueNameCandidates.First())?.Value * 2000})"
-                        : $"\nIdentified as one of:\n{string.Join('\n', HoveredItem.UniqueNameCandidates.Select(x => $"{x} (disenchants for {_disenchantCache.Value.FirstOrDefault(y => y.UniqueName?.Text == x)?.Value * 2000})"))}");
+                        ? $"\nIdentified as: {HoveredItem.UniqueNameCandidates.First()} (disenchants for {ComputeDust(DisenchantData.Where(y => y.UniqueName == HoveredItem.UniqueNameCandidates.First()).Select(y => (float?)y.Value).FirstOrDefault())})"
+                        : $"\nIdentified as one of:\n{string.Join('\n', HoveredItem.UniqueNameCandidates.Select(x => $"{x} (disenchants for {ComputeDust(DisenchantData.Where(y => y.UniqueName == x).Select(y => (float?)y.Value).FirstOrDefault())})"))}");
                 }
 
                 AddSection();
@@ -446,7 +452,7 @@ public partial class Main
 
                 if (!string.IsNullOrEmpty(HoveredItem.UniqueName))
                 {
-                    AddText($"\nDisenchants for {_disenchantCache.Value.FirstOrDefault(x => x.UniqueName?.Text == HoveredItem.UniqueName)?.Value * 2000}");
+                    AddText($"\nDisenchants for {ComputeDust(DisenchantData.Where(x => x.UniqueName == HoveredItem.UniqueName).Select(x => (float?)x.Value).FirstOrDefault())}");
                 }
 
                 break;
@@ -929,6 +935,24 @@ public partial class Main
     private float _minDisenchantValue = 0;
     private float _maxDisenchantCost = 1000;
     private readonly CachedValue<List<VillageUniqueDisenchantValue>> _disenchantCache;
+    private static List<(string UniqueName, float Value)> _persistedDisenchantData;
+    private static List<VillageUniqueDisenchantValue> _lastLiveData;
+
+    private List<(string UniqueName, float Value)> DisenchantData
+    {
+        get
+        {
+            var live = _disenchantCache.Value;
+            if (live?.Count > 0 && live != _lastLiveData)
+            {
+                _lastLiveData = live;
+                _persistedDisenchantData = live
+                    .Select(x => (x.UniqueName?.Text?.Replace('\x2019', '\x27') ?? "", x.Value))
+                    .ToList();
+            }
+            return _persistedDisenchantData ?? [];
+        }
+    }
 
     private void DrawVillageUniqueWindow()
     {
@@ -957,12 +981,12 @@ public partial class Main
                         .Select(x => x.Replace('\x2019', '\x27'))
                         .ToHashSet();
 
-                    var unfilteredItems = _disenchantCache.Value.ExceptBy(excludedUniques, x => x.UniqueName?.Text.Replace('\x2019', '\x27') ?? "")
+                    var unfilteredItems = DisenchantData.ExceptBy(excludedUniques, x => x.UniqueName)
                         .Select(x => (
-                            Name: x.UniqueName?.Text.Replace('\x2019', '\x27') ?? "",
-                            Cost: uniquePrices.GetValueOrDefault(x.UniqueName?.Text ?? ""),
-                            Value: x.Value * 2000,
-                            ValuePerChaos: uniquePrices.TryGetValue(x.UniqueName?.Text.Replace('\x2019', '\x27') ?? "", out var price) ? x.Value * 2000 / Math.Max(1, price) : 0))
+                            Name: x.UniqueName,
+                            Cost: uniquePrices.GetValueOrDefault(x.UniqueName),
+                            Value: x.Value * 2500,
+                            ValuePerChaos: uniquePrices.TryGetValue(x.UniqueName, out var price) ? x.Value * 2500 / Math.Max(1, price) : 0))
                         .ToList();
                     var items = unfilteredItems.Any()
                         ? unfilteredItems
